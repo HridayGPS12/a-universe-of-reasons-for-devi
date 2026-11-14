@@ -1,0 +1,937 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#080a18">
+  <meta name="description" content="A little universe made of memories, music, and 365 reasons I love you, Devi.">
+  <title>A Universe of Reasons — For My Devi</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #f9f4ff;
+      --muted: #bcb8d3;
+      --gold: #f5d58e;
+      --rose: #f2b4c9;
+      --glass: rgba(20, 22, 48, .58);
+      --line: rgba(255, 255, 255, .13);
+      --serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      --sans: "Avenir Next", Avenir, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #080a18; }
+    body { color: var(--ink); font-family: var(--sans); }
+    button, input { font: inherit; }
+    button { color: inherit; }
+    .space {
+      position: fixed; inset: 0; overflow: hidden;
+      background:
+        radial-gradient(ellipse at 51% 42%, rgba(46, 46, 99, .34), transparent 45%),
+        radial-gradient(ellipse at 16% 86%, rgba(70, 33, 82, .2), transparent 38%),
+        linear-gradient(160deg, #11152e 0%, #090b1c 47%, #080916 100%);
+    }
+    .nebula { position:absolute; inset:-20%; pointer-events:none; opacity:.52; filter:blur(54px); }
+    .nebula::before,.nebula::after { content:""; position:absolute; border-radius:50%; }
+    .nebula::before { width:38vw;height:28vw;left:10%;top:14%;background:rgba(89,72,151,.16);transform:rotate(-26deg); }
+    .nebula::after { width:31vw;height:22vw;right:10%;bottom:12%;background:rgba(171,84,129,.10);transform:rotate(23deg); }
+    #sky { position:absolute; inset:0; width:100%; height:100%; touch-action:none; cursor:grab; }
+    #sky.dragging { cursor:grabbing; }
+    .veil { position:fixed; inset:0; z-index:20; display:grid; place-items:center; padding:22px; background:rgba(5,6,17,.38); backdrop-filter:blur(2px); transition:opacity 1s ease, visibility 1s ease; }
+    .veil.open { opacity:0; visibility:hidden; pointer-events:none; }
+    .login-card { width:min(100%, 440px); padding:38px 34px 32px; border:1px solid rgba(255,255,255,.15); border-radius:30px; text-align:center; background:linear-gradient(145deg,rgba(27,29,61,.78),rgba(15,16,38,.76)); box-shadow:0 28px 100px rgba(0,0,0,.42), inset 0 1px rgba(255,255,255,.12); backdrop-filter:blur(20px); animation:card-in 1s cubic-bezier(.2,.8,.2,1) both; }
+    @keyframes card-in { from {opacity:0;transform:translateY(18px) scale(.98)} to {opacity:1;transform:none} }
+    .moon { font-size:24px; color:var(--gold); text-shadow:0 0 24px rgba(245,213,142,.7); letter-spacing:.2em; }
+    .eyebrow { margin:15px 0 10px; color:var(--gold); font-size:10px; font-weight:700; letter-spacing:.24em; text-transform:uppercase; }
+    h1,h2,h3,p { margin-top:0; }
+    .login-card h1 { margin:0; font:400 clamp(30px, 7vw, 42px)/1.08 var(--serif); letter-spacing:-.025em; }
+    .login-card .subtitle { margin:13px 0 27px; color:var(--muted); font:italic 16px/1.5 var(--serif); }
+    .field-label { display:block; margin:0 0 9px; color:#dedbed; font-size:12px; text-align:left; }
+    .password-field { width:100%; padding:15px 16px; border:1px solid rgba(255,255,255,.2); border-radius:14px; outline:none; color:#fff; background:rgba(5,7,20,.55); letter-spacing:.2em; text-align:center; transition:border-color .2s,box-shadow .2s; }
+    .password-field:focus { border-color:rgba(245,213,142,.75); box-shadow:0 0 0 4px rgba(245,213,142,.1); }
+    .primary-btn { width:100%; min-height:49px; margin-top:13px; border:0; border-radius:14px; color:#24192a; font-weight:700; background:linear-gradient(110deg,#f6dda4,#e9b8c9); cursor:pointer; box-shadow:0 8px 30px rgba(225,173,191,.16); transition:transform .2s,filter .2s; }
+    .primary-btn:hover { transform:translateY(-1px); filter:brightness(1.06); }
+    .login-message { min-height:20px; margin:12px 0 0; color:#ffd1d8; font-size:12px; }
+    .private-note { margin:5px 0 0; color:rgba(208,204,231,.55); font-size:10px; line-height:1.5; }
+    .top-copy { position:fixed; z-index:2; top:clamp(23px,5vh,52px); left:50%; width:min(92vw,680px); transform:translateX(-50%); text-align:center; pointer-events:none; opacity:0; transition:opacity 1s ease 0.55s; }
+    body.unlocked .top-copy { opacity:1; }
+    .top-copy .eyebrow { margin:0 0 9px; }
+    .top-copy h2 { margin:0; font:400 clamp(31px,5vw,52px)/1.08 var(--serif); text-shadow:0 3px 28px rgba(0,0,0,.55); }
+    .top-copy p { margin:10px 0 0; color:rgba(223,219,242,.75); font:italic 15px/1.4 var(--serif); }
+    .constellation-label { position:fixed; top:clamp(145px,23vh,215px); left:50%; transform:translateX(-50%); z-index:2; color:rgba(245,213,142,.85); font-size:10px; letter-spacing:.2em; text-transform:uppercase; opacity:0; transition:opacity 1s ease .7s; }
+    body.unlocked .constellation-label { opacity:1; }
+    .hint { position:fixed; z-index:2; left:50%; bottom:105px; transform:translateX(-50%); padding:8px 13px; border:1px solid rgba(255,255,255,.11); border-radius:999px; color:rgba(229,225,245,.65); background:rgba(12,13,31,.3); font-size:11px; white-space:nowrap; pointer-events:none; opacity:0; transition:opacity .8s 1s; }
+    body.unlocked .hint { opacity:1; }
+    .hint b { color:#f5d58e; font-weight:500; }
+    .corner-actions { position:fixed; z-index:4; right:max(18px,env(safe-area-inset-right)); bottom:max(21px,env(safe-area-inset-bottom)); display:flex; gap:9px; opacity:0; transform:translateY(9px); transition:opacity .6s,transform .6s; }
+    body.unlocked .corner-actions { opacity:1; transform:none; }
+    .glass-button { display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:45px; padding:0 15px; border:1px solid var(--line); border-radius:999px; background:rgba(19,21,45,.64); box-shadow:0 8px 28px rgba(0,0,0,.18),inset 0 1px rgba(255,255,255,.08); backdrop-filter:blur(18px); cursor:pointer; transition:background .2s,border-color .2s,transform .2s; }
+    .glass-button:hover { background:rgba(43,42,76,.78); border-color:rgba(255,255,255,.26); transform:translateY(-1px); }
+    .glass-button .icon { color:var(--gold); font-size:15px; }
+    .music-player { position:fixed; z-index:4; left:max(18px,env(safe-area-inset-left)); bottom:max(21px,env(safe-area-inset-bottom)); display:flex; align-items:center; gap:6px; max-width:min(390px,calc(100vw - 36px)); padding:6px; border:1px solid var(--line); border-radius:999px; background:rgba(19,21,45,.68); box-shadow:0 10px 36px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.08); backdrop-filter:blur(18px); opacity:0; transform:translateY(9px); transition:opacity .6s,transform .6s; }
+    body.unlocked .music-player { opacity:1; transform:none; }
+    .music-art { display:grid; place-items:center; flex:0 0 34px; width:34px; height:34px; border-radius:50%; color:#24192a; background:linear-gradient(135deg,#f7e2a7,#e8b7cf); }
+    .music-art span { display:block; font-size:16px; }
+    body.is-playing .music-art span { animation:spin 9s linear infinite; }
+    @keyframes spin { to {transform:rotate(360deg)} }
+    .music-info { min-width:0; flex:1; padding:0 6px; }
+    .music-kicker { margin-bottom:2px; color:rgba(209,205,231,.58); font-size:9px; letter-spacing:.13em; text-transform:uppercase; }
+    .music-title { overflow:hidden; color:#f8f3ff; font:13px/1.25 var(--serif); text-overflow:ellipsis; white-space:nowrap; }
+    .music-control { display:grid; place-items:center; width:34px; height:34px; border:0; border-radius:50%; color:#e9e5f5; background:transparent; cursor:pointer; }
+    .music-control:hover { background:rgba(255,255,255,.1); }
+    .music-control.skip { color:var(--gold); font-size:19px; }
+    .modal-backdrop { position:fixed; z-index:10; inset:0; display:none; place-items:center; padding:20px; background:rgba(4,5,16,.68); backdrop-filter:blur(12px); }
+    .modal-backdrop.visible { display:grid; animation:fade-in .25s ease both; }
+    @keyframes fade-in { from {opacity:0} to {opacity:1} }
+    .memory-card { position:relative; width:min(100%, 460px); max-height:min(90vh,860px); overflow:auto; padding:21px 22px 23px; border:1px solid rgba(255,255,255,.2); border-radius:25px; background:linear-gradient(145deg,rgba(35,34,65,.93),rgba(16,17,38,.95)); box-shadow:0 28px 100px rgba(0,0,0,.56),inset 0 1px rgba(255,255,255,.1); text-align:center; animation:card-in .4s cubic-bezier(.2,.8,.2,1) both; }
+    .modal-close { position:absolute; z-index:3; top:12px; right:12px; width:37px; height:37px; border:1px solid rgba(255,255,255,.16); border-radius:50%; color:#fff; background:rgba(0,0,0,.25); cursor:pointer; }
+    .crown { margin:0 0 7px; color:var(--gold); font-size:18px; letter-spacing:.3em; text-shadow:0 0 18px rgba(245,213,142,.45); }
+    .memory-number { margin:0 0 14px; color:rgba(240,218,160,.78); font-size:10px; letter-spacing:.2em; text-transform:uppercase; }
+    .polaroid { position:relative; width:min(100%, 372px); margin:0 auto; padding:11px 11px 15px; background:#f6f0e5; box-shadow:0 17px 48px rgba(0,0,0,.38); transform:rotate(-1.1deg); }
+    .photo-window { display:flex; align-items:center; justify-content:center; width:100%; height:clamp(215px,45vh,400px); overflow:hidden; color:#827b77; background:linear-gradient(135deg,#e7e0d5,#d7d1d7); }
+    .photo-window img { display:block; flex:0 0 auto; width:100%; height:100%; margin:auto; object-fit:contain; object-position:center center; opacity:0; transform:scale(.68); transform-origin:center center; transition:opacity .45s ease,transform .8s cubic-bezier(.2,.8,.2,1); }
+    .photo-window img.ready { opacity:1; transform:scale(.75); }
+    .photo-window .image-error { display:none; padding:20px; color:#665e68; font:italic 16px var(--serif); }
+    .polaroid-caption { margin:12px 0 0; color:#655963; font:italic 14px var(--serif); }
+    .sparkles { position:absolute; z-index:2; top:88px; left:0; right:0; height:58px; pointer-events:none; }
+    .sparkles span { position:absolute; color:var(--gold); text-shadow:0 0 10px rgba(250,218,141,.8); animation:float 2.8s ease-in-out infinite; }
+    .sparkles span:nth-child(1) {left:11%;top:18px;font-size:15px}.sparkles span:nth-child(2){left:84%;top:2px;font-size:11px;animation-delay:.6s}.sparkles span:nth-child(3){left:91%;top:39px;font-size:17px;animation-delay:1.1s}.sparkles span:nth-child(4){left:6%;top:44px;font-size:10px;animation-delay:.3s}
+    @keyframes float { 50% {transform:translateY(-8px) scale(1.15);opacity:.58} }
+    .reason-label { margin:21px 0 8px; color:var(--gold); font-size:9px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; }
+    .reason-text { min-height:63px; margin:0 auto; max-width:370px; color:#f4edf8; font:italic clamp(18px,4vw,22px)/1.45 var(--serif); }
+    .modal-nav { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:17px; }
+    .nav-btn { min-width:104px; min-height:39px; padding:0 14px; border:1px solid rgba(255,255,255,.17); border-radius:999px; color:#f7f3ff; background:rgba(255,255,255,.06); cursor:pointer; }
+    .nav-btn:hover { background:rgba(255,255,255,.12); }
+    .nav-count { color:rgba(221,216,240,.63); font-size:11px; font-variant-numeric:tabular-nums; }
+    .add-card { width:min(100%, 490px); padding:28px; text-align:left; }
+    .add-card h2 { margin:0 0 7px; font:400 31px/1.1 var(--serif); }
+    .add-card .subline { margin:0 0 21px; color:var(--muted); font:italic 15px/1.5 var(--serif); }
+    .add-section { margin-top:17px; }
+    .add-section label { display:block; margin:0 0 7px; color:#d9d5e9; font-size:11px; }
+    .add-section input[type="text"],.add-section input[type="password"] { width:100%; min-height:42px; padding:10px 12px; border:1px solid rgba(255,255,255,.16); border-radius:11px; outline:0; color:#fff; background:rgba(0,0,0,.22); }
+    .add-section input:focus { border-color:rgba(245,213,142,.65); }
+    .file-drop { display:block; padding:18px; border:1px dashed rgba(245,213,142,.4); border-radius:14px; text-align:center; background:rgba(245,213,142,.04); cursor:pointer; }
+    .file-drop input { display:none; }
+    .file-drop strong { display:block; color:#f7e0a6; font-size:13px; }
+    .file-drop span { display:block; margin-top:5px; color:rgba(222,218,239,.55); font-size:10px; }
+    .upload-note,.upload-status { margin:12px 0 0; color:rgba(220,216,238,.64); font-size:10px; line-height:1.5; }
+    .upload-status { min-height:17px; color:var(--gold); font-size:11px; }
+    .file-summary { margin:7px 0 0; color:#e7d3a0; font-size:11px; }
+    .hidden { display:none !important; }
+    .modal-buttons { display:flex; gap:9px; margin-top:14px; }
+    .modal-buttons .primary-btn { margin:0; }
+    .secondary-btn { min-height:45px; padding:0 17px; border:1px solid rgba(255,255,255,.17); border-radius:13px; color:#f5f0ff; background:rgba(255,255,255,.06); cursor:pointer; }
+    .modal-error { min-height:16px; margin:8px 0 0; color:#ffd1d8; font-size:11px; }
+    .noscript { position:fixed;z-index:30;inset:0;display:grid;place-items:center;padding:30px;text-align:center;background:#080a18; }
+    @media (max-width:640px) {
+      .top-copy { top:25px; }
+      .top-copy h2 { font-size:35px; }
+      .top-copy p { margin-top:7px;font-size:13px; }
+      .constellation-label { top:137px; font-size:9px; }
+      .hint { bottom:87px; font-size:10px; }
+      .corner-actions { right:12px; bottom:calc(83px + env(safe-area-inset-bottom)); }
+      .glass-button { min-height:41px; padding:0 12px; font-size:12px; }
+      .music-player { left:12px;right:12px;bottom:max(14px,env(safe-area-inset-bottom));max-width:none; }
+      .login-card { padding:34px 24px 27px; }
+      .photo-window { height:clamp(205px,39vh,340px); }
+      .sparkles { top:83px; }
+      .add-card { padding:23px 20px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *,*::before,*::after { scroll-behavior:auto !important; animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="space" aria-label="A universe of memories">
+    <div class="nebula" aria-hidden="true"></div>
+    <canvas id="sky" tabindex="0" aria-label="Interactive constellation of photo stars. Drag to explore and tap a star to open its memory."></canvas>
+  </main>
+
+  <section class="top-copy" aria-live="polite">
+    <p class="eyebrow">A little universe, made for you</p>
+    <h2>A Universe of Reasons</h2>
+    <p>For My Devi <span aria-hidden="true">✦</span> somewhere between every star and every small thing</p>
+  </section>
+  <div class="constellation-label" id="shapeLabel">A new constellation is taking shape</div>
+  <div class="hint"><b>Drag</b> to wander&nbsp; · &nbsp;<b>Pinch or scroll</b> to zoom&nbsp; · &nbsp;<b>Tap a star</b> for a reason</div>
+
+  <div class="music-player" aria-label="Music player">
+    <div class="music-art" aria-hidden="true"><span>✦</span></div>
+    <div class="music-info"><div class="music-kicker" id="trackKicker">Random song · every visit</div><div class="music-title" id="trackTitle">Your first song is waiting…</div></div>
+    <button class="music-control" id="playButton" type="button" title="Play music" aria-label="Play music">▶</button>
+    <button class="music-control" id="muteButton" type="button" title="Mute music" aria-label="Mute music">♫</button>
+    <button class="music-control skip" id="skipButton" type="button" title="Play another song" aria-label="Play another song">⤭</button>
+  </div>
+  <div class="corner-actions">
+    <button class="glass-button" id="addStarsButton" type="button"><span class="icon">＋</span> Add stars</button>
+  </div>
+  <audio id="player" preload="none"></audio>
+
+  <div class="veil" id="loginVeil">
+    <form class="login-card" id="loginForm" autocomplete="off">
+      <div class="moon" aria-hidden="true">✦ &nbsp; ☾ &nbsp; ✦</div>
+      <p class="eyebrow">for the one who makes the sky feel closer</p>
+      <h1>For My Devi<br>— Enter the Beginning</h1>
+      <p class="subtitle">Somewhere, a whole universe has been waiting for you.</p>
+      <label class="field-label" for="passcode">The little secret between us</label>
+      <input class="password-field" id="passcode" name="passcode" type="password" inputmode="numeric" autocomplete="current-password" placeholder="••••••••" required aria-describedby="loginMessage">
+      <button class="primary-btn" type="submit">Open our universe&nbsp; ✨</button>
+      <p class="login-message" id="loginMessage" role="status" aria-live="polite"></p>
+      <p class="private-note">A sweet little lock for this page. The memories themselves are public when hosted on GitHub Pages.</p>
+    </form>
+  </div>
+
+  <div class="modal-backdrop" id="memoryModal" role="dialog" aria-modal="true" aria-labelledby="memoryLabel">
+    <section class="memory-card">
+      <button class="modal-close" type="button" data-close="memoryModal" aria-label="Close memory">×</button>
+      <div class="sparkles" aria-hidden="true"><span>✧</span><span>✦</span><span>✧</span><span>·</span></div>
+      <div class="crown" aria-hidden="true">♔</div>
+      <p class="memory-number" id="memoryLabel">Our little universe</p>
+      <div class="polaroid">
+        <div class="photo-window"><img id="memoryImage" alt="A memory for Devi" loading="lazy"><span class="image-error" id="imageError">This little star is shy. Its photo will be here soon.</span></div>
+        <p class="polaroid-caption">you make ordinary moments glow</p>
+      </div>
+      <p class="reason-label">A reason I love you</p>
+      <p class="reason-text" id="reasonText" aria-live="polite"></p>
+      <div class="modal-nav">
+        <button class="nav-btn" id="previousButton" type="button">←&nbsp; Previous</button>
+        <span class="nav-count" id="photoCount">1 / 1</span>
+        <button class="nav-btn" id="nextButton" type="button">Next&nbsp; →</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal-backdrop" id="addModal" role="dialog" aria-modal="true" aria-labelledby="addTitle">
+    <section class="memory-card add-card">
+      <button class="modal-close" type="button" data-close="addModal" aria-label="Close Add Stars">×</button>
+      <p class="eyebrow">a tiny corner for the keeper of this sky</p>
+      <h2 id="addTitle">Add new stars</h2>
+      <p class="subline">Choose a handful of photos and let them find a place in your constellation.</p>
+      <div id="addGate">
+        <div class="add-section"><label for="addPasscode">Unlock this little keeper's door</label><input id="addPasscode" type="password" inputmode="numeric" autocomplete="current-password" placeholder="Enter the page password"></div>
+        <div class="modal-buttons"><button class="primary-btn" id="unlockAddButton" type="button">Unlock Add Stars</button></div>
+        <p class="modal-error" id="addGateError" role="status"></p>
+      </div>
+      <div id="uploader" class="hidden">
+        <div class="add-section"><label for="ownerField">GitHub username</label><input id="ownerField" type="text" placeholder="your-username" autocomplete="off"></div>
+        <div class="add-section"><label for="repoField">Repository name</label><input id="repoField" type="text" placeholder="our-little-universe" autocomplete="off"></div>
+        <div class="add-section"><label for="tokenField">Fine-grained GitHub token</label><input id="tokenField" type="password" placeholder="Only kept in this browser tab" autocomplete="off"></div>
+        <div class="add-section">
+          <label class="file-drop" for="photoFiles"><strong>Select several photos</strong><span>JPG, PNG, WEBP, or GIF · photos are uploaded to /photos</span><input id="photoFiles" type="file" accept="image/*" multiple><span class="file-summary" id="fileSummary"></span></label>
+        </div>
+        <p class="upload-note">The token is held in session storage for this tab only. It needs Contents: read and write access to this one repository.</p>
+        <div class="modal-buttons"><button class="primary-btn" id="uploadButton" type="button">Add to the sky</button><button class="secondary-btn" id="lockAddButton" type="button">Lock</button></div>
+        <p class="upload-status" id="uploadStatus" aria-live="polite"></p>
+      </div>
+    </section>
+  </div>
+
+  <noscript><div class="noscript">This universe needs JavaScript to draw its stars. Please enable it, then come back.</div></noscript>
+
+  <script>
+    (() => {
+      'use strict';
+
+      // A static GitHub Pages lock is a romantic veil, not real access control.
+      const PAGE_PASSWORD = '20072026';
+      const SONGS = [
+        { file: 'song1.mp3', title: 'From The Start — Laufey' },
+        { file: 'song2.mp3', title: 'A voice note from your little universe · 01' },
+        { file: 'song3.mp3', title: 'A voice note from your little universe · 02' },
+        { file: 'song4.mp3', title: 'A voice note from your little universe · 03' },
+        { file: 'song5.mp3', title: 'A voice note from your little universe · 04' }
+      ];
+      const SHAPES = [
+        { name: 'Royal Crown', point: crownPoint },
+        { name: 'Blooming Lotus', point: lotusPoint },
+        { name: 'Heart', point: heartPoint },
+        { name: 'Infinity Symbol', point: infinityPoint },
+        { name: 'Celestial Spiral', point: spiralPoint },
+        { name: 'Twin Galaxies', twin: true }
+      ];
+      const reasons = [
+        // The little things that make her who she is
+        "I love how your kindness never needs an audience.",
+        "You notice the person standing quietly at the edge of the room.",
+        "Your curiosity makes even familiar things feel worth exploring again.",
+        "I admire the way you can be honest without being unkind.",
+        "You have a gentle strength that feels entirely your own.",
+        "The way you laugh is one of my favorite sounds in the world.",
+        "You make room for other people's feelings without losing your own voice.",
+        "I love how your eyes brighten when something matters to you.",
+        "You bring a lovely kind of sincerity into everything you care about.",
+        "Your sense of humor can find a little light in a long day.",
+        "You are thoughtful in ways that feel natural and never showy.",
+        "I love how you stay curious instead of pretending to know everything.",
+        "You have a way of making people feel welcome just as they are.",
+        "Your patience has a softness that makes people feel safe.",
+        "You can be wonderfully silly and still completely graceful.",
+        "I admire how you keep your heart open without giving up your boundaries.",
+        "You bring your own quiet sparkle wherever you go.",
+        "Your honesty makes trust feel like something we can build together.",
+        "I love that you care about the small details, not only the big moments.",
+        "You make being genuine look beautiful.",
+        "There is so much warmth in the way you say my name.",
+        "You are brave enough to be soft in a world that rushes past softness.",
+        "I love how your enthusiasm makes the things you enjoy shine brighter.",
+        "You know how to disagree while still making me feel respected.",
+        "Your generosity shows up in the little choices you make.",
+        "You have a beautiful way of staying true to yourself.",
+        "I love that your first instinct is often to understand.",
+        "You can make a simple story feel captivating just by telling it your way.",
+        "Your imagination gives ordinary afternoons a little extra color.",
+        "I admire the care you put into becoming more yourself.",
+        "You let people see your real smile, and it feels like a gift.",
+        "Your calm presence can soften the sharp edges of a busy day.",
+        "I love how you notice beauty without needing to own it.",
+        "You have the courage to keep learning when it would be easier to stop.",
+        "Your tenderness is one of the strongest things about you.",
+        "You can make a room feel more human simply by being in it.",
+        "I love your little expressions that say exactly what words do not.",
+        "You are generous with encouragement when someone needs a lift.",
+        "The way you think about the world always gives me something new to admire.",
+        "You make being thoughtful feel effortless.",
+        "I love that you are allowed to be a different version of yourself each day.",
+        "Your smile has a way of arriving before the rest of you does.",
+        "You are so much more than any one perfect moment.",
+        "I admire your ability to make room for hope and realism together.",
+        "You have a gentle confidence that does not need to be loud.",
+        "Your care for other people says a lot about the shape of your heart.",
+        "I love how you can find something interesting in an unexpected place.",
+        "You make sincerity feel refreshing.",
+        "I love the thoughtful person you are when no one is watching.",
+        "Your soft side and your strong side belong together beautifully.",
+        "You make a little awkwardness feel easier to laugh through.",
+        "I love that you can be both wonderfully serious and wonderfully playful.",
+        "Your mind has its own lovely way of connecting the dots.",
+        "You are kind without making kindness feel like a performance.",
+        "I admire how you keep trying, even when a day feels heavy.",
+        "Your presence is comforting without ever feeling ordinary.",
+        "You are the sort of person who makes a good moment feel even better.",
+        "I love the tiny flashes of mischief in your grin.",
+        "You make thoughtfulness look like a quiet art.",
+        "Your openness makes new conversations feel easy to begin.",
+        "I love how you can change your mind when a better thought finds you.",
+        "You carry your dreams with a lot of heart.",
+        "Your gentleness does not make you less strong; it makes you more you.",
+        "I love that your kindness reaches beyond the people who can repay it.",
+        "You make the word lovely feel like it has a real person in it.",
+        "I admire how you can be proud of yourself and still stay humble.",
+        "Your voice has a warmth I could recognize in a crowded room.",
+        "You make being yourself look like the most beautiful choice.",
+        "I love how you let joy take up space in your life.",
+        "You are thoughtful about the things that matter to the people you love.",
+        "Your steady heart is one of my favorite things to lean toward.",
+        "I love that you have your own pace and your own way of seeing.",
+
+        // The way loving her feels from the inside
+        "Being near you makes my shoulders remember how to relax.",
+        "I feel more like myself when I am with you.",
+        "You make an ordinary day feel like it has a secret golden hour.",
+        "My mind comes back to you in the middle of its most ordinary thoughts.",
+        "You make the quiet feel like company instead of silence.",
+        "Even a short hello from you can change the mood of my whole day.",
+        "I feel lucky in the small, everyday ways whenever I think of you.",
+        "You make me want to slow down long enough to notice the good parts.",
+        "With you, being understood feels better than being impressive.",
+        "You make home feel more like a feeling than an address.",
+        "I can picture tomorrow more clearly when I imagine you in it.",
+        "Your affection makes my heart feel safe enough to be honest.",
+        "You bring a little more color into the way I remember my days.",
+        "I love the calm that finds me when I know we are okay.",
+        "Thinking of you can turn a long wait into something gentle.",
+        "You make being on the same team feel like the best kind of luck.",
+        "I find myself smiling at thoughts I have not even told you yet.",
+        "You make closeness feel like breathing out after a long day.",
+        "I love how ordinary moments feel worth keeping when you are part of them.",
+        "Your presence makes the world feel a little less hurried.",
+        "I feel seen by you in ways I do not always know how to explain.",
+        "You make me feel grateful without needing to do anything grand.",
+        "The thought of your laugh can find me when I need a lift.",
+        "You make the future feel like somewhere I would like to wander.",
+        "I feel softer around you, and I love that about us.",
+        "Your messages have a way of making my phone feel like good news.",
+        "You make it easier to believe that tenderness can last.",
+        "I love that a quiet moment with you can feel complete.",
+        "The day seems kinder when I know I get to share a piece of it with you.",
+        "You make my heart feel both peaceful and wonderfully awake.",
+        "I love feeling close to you even when we are doing nothing special.",
+        "You make my happiest memories feel warm when I revisit them.",
+        "I feel more hopeful about hard things when we face them together.",
+        "Your company turns waiting around into time I do not mind spending.",
+        "You make affection feel safe, playful, and real.",
+        "I love the little spark of excitement I get before seeing you.",
+        "With you, silence can feel like a conversation that is resting.",
+        "You make me feel like there is always someone on my side.",
+        "I like who I am becoming beside you.",
+        "You make my heart feel welcome instead of on guard.",
+        "I love how one thought of you can soften a crowded day.",
+        "You make even the in-between parts of life feel meaningful.",
+        "I feel lucky that my favorite person is also someone I can talk to.",
+        "You make love feel steady without making it feel routine.",
+        "The world feels more welcoming when I know you are in it.",
+        "I love that missing you and feeling grateful for you can happen together.",
+        "You make me look forward to the small details of a day.",
+        "I feel understood even in the moments when my words are still catching up.",
+        "You make my heart feel lighter without asking it to hide anything.",
+        "Being loved by you feels like being invited to exhale.",
+        "I love the way a shared smile can say enough.",
+        "You make me glad that our paths found a way to meet.",
+        "I feel at ease knowing we can keep learning each other.",
+        "You make me appreciate the present instead of racing past it.",
+        "I love that our quiet happiness does not need an audience.",
+        "You make me feel like my heart picked a beautiful place to stay.",
+        "Your company is one of my favorite ways to spend time.",
+        "I love that being close to you can be both exciting and peaceful.",
+        "You make me more generous with my attention and my time.",
+        "Even from far away, you have a way of feeling near.",
+        "I love knowing there is more of your story for me to learn.",
+        "You make me want to keep choosing love in practical little ways.",
+        "My favorite version of a good day usually has you somewhere in it.",
+        "You make room in my heart feel like a real place.",
+        "I feel grateful that I get to know you as you are, not as an idea.",
+        "You make me believe that being gentle with each other matters.",
+        "I love the comfort of knowing we can find our way back to a smile.",
+        "You make my heart feel at home without asking it to stand still.",
+        "I love that being with you gives the day a softer ending.",
+        "You make happiness feel less like a highlight and more like a habit.",
+        "I like that my heart keeps choosing the thought of you.",
+        "The sweetest part of many days is simply getting to care about you.",
+        "You make my life feel more connected to the things that matter.",
+        "I love the sense of possibility I feel when I think of us.",
+        "You make together feel like a word with room to grow.",
+
+        // The small ways she makes people feel cared for
+        "You remember details that make people feel worth remembering.",
+        "I love how you check in because you genuinely want to know.",
+        "You give people room to finish their thoughts in their own time.",
+        "You notice when someone could use a little encouragement.",
+        "I love how your first instinct is often to make space for someone else.",
+        "You offer kindness without turning it into a debt.",
+        "You know that listening can be a way of holding someone's hand.",
+        "I love the care you put into the words you choose.",
+        "You find gentle ways to make people feel included.",
+        "You show your love through the way you pay attention.",
+        "I love that you notice when a small thing matters to me.",
+        "You make it feel safe to say what is really on my mind.",
+        "You know how to be present instead of trying to fix everything at once.",
+        "You are careful with people's trust.",
+        "I love how you make room for a second chance and a better conversation.",
+        "You have a lovely way of making care feel steady.",
+        "You are gentle with the parts of people they are still figuring out.",
+        "I love the way you celebrate the good news of the people you love.",
+        "You make a simple 'are you okay?' feel like you mean it.",
+        "You offer comfort without making anyone feel small for needing it.",
+        "You are generous with your patience when someone needs a little more time.",
+        "I love that you remember to ask about the things I care about.",
+        "You make people feel listened to, not merely waited out.",
+        "You can be supportive without taking away someone else's strength.",
+        "Your thoughtfulness shows up before anyone has to ask for it.",
+        "I love how you can make a kind gesture feel personal.",
+        "You have a way of noticing who has not had a chance to speak.",
+        "You respect the difference between helping and taking over.",
+        "I love the sincere way you say thank you.",
+        "You bring care into the boring parts of life, too.",
+        "You take people's feelings seriously, even when they are hard to explain.",
+        "You make an apology feel like an opening, not a performance.",
+        "I love that you can offer reassurance without pretending nothing is wrong.",
+        "You remember that little acts can carry a lot of love.",
+        "You make it easy to trust the kindness in your words.",
+        "I love how you support the people you love while letting them be themselves.",
+        "You can turn a rough moment into one that feels less lonely.",
+        "You are thoughtful about how your choices land with other people.",
+        "I love the way you make room for honest answers.",
+        "You care about the details that make my day a little easier.",
+        "You find the right kind of gentle when someone needs it.",
+        "You are kind when it is convenient and when it takes effort.",
+        "I love how you let people know they matter to you.",
+        "You make encouragement feel believable because you mean it.",
+        "You remember that being there can matter more than having the perfect words.",
+        "I love your instinct to share the good things you find.",
+        "You are generous with understanding and careful with judgment.",
+        "You make the people closest to you feel like they can come as they are.",
+        "I love that you notice effort, not only outcomes.",
+        "You take the time to make small celebrations feel special.",
+        "Your care is in the way you follow through.",
+        "You can be honest about a hard thing and still leave room for tenderness.",
+        "I love the way you make gratitude sound personal.",
+        "You offer your attention like it is something precious.",
+        "You are sensitive to the moods of a room without losing your own center.",
+        "I love how you make a welcome feel sincere.",
+        "You know when to give advice and when to simply stay close.",
+        "You make space for people to change their minds.",
+        "I love how you are thoughtful even when the moment is ordinary.",
+        "You make people feel remembered long after a conversation ends.",
+        "You can show concern without making it feel like pressure.",
+        "I love how you help kindness travel from one person to another.",
+        "You make the people you care for feel like a priority.",
+        "Your gentleness makes difficult conversations easier to enter.",
+        "I love the warmth you leave behind after a small act of care.",
+        "You choose compassion in moments when it would be simpler to hurry away.",
+        "You make people feel safe enough to be a little more honest.",
+        "I love how naturally you include me in the things you notice.",
+        "You remember that care can be quiet and still be enormous.",
+        "You make kindness feel like something we can practice every day.",
+        "I love that your heart makes room for more than just the easy moments.",
+        "You know how to give reassurance that feels like you, not a script.",
+        "You leave people feeling a little more understood than before.",
+        "I love the patient way you let love take its time.",
+
+        // What makes our kind of love feel like ours
+        "I love that we can be honest and still be gentle with each other.",
+        "You make choosing each other feel like a lovely everyday thing.",
+        "I love that our story gets to be made of real days, not just big moments.",
+        "You are my favorite person to tell a small piece of news to.",
+        "I love how we can keep discovering new things about each other.",
+        "You make me want to bring my whole self into this relationship.",
+        "I love that our affection can be playful as well as deep.",
+        "You make the word 'us' feel warm and roomy.",
+        "I love that we can make our own meaning from ordinary time together.",
+        "You remind me that a good relationship is built in the little moments.",
+        "I love that I can miss you and still feel close to you.",
+        "You make it easy to believe in growing side by side.",
+        "I love the trust we keep building one honest conversation at a time.",
+        "You make being a team feel more like comfort than a slogan.",
+        "I love that our differences give us more to learn from each other.",
+        "You make love feel like something we can care for together.",
+        "I love the way we can return to tenderness after a long day.",
+        "You are the person I want beside me for the small victories, too.",
+        "I love that we do not have to make every moment impressive.",
+        "You make our shared quiet feel like one of life's nicest things.",
+        "I love getting to cheer for the person you are becoming.",
+        "You make our affection feel like a place we can keep coming home to.",
+        "I love how we can make a little ritual feel like ours.",
+        "You are someone I want to understand more deeply, year after year.",
+        "I love that we can be each other's soft place to land.",
+        "You make me glad to put care into the way we speak to each other.",
+        "I love that a shared plan can feel exciting simply because it is with you.",
+        "You make love feel like listening, laughing, and showing up again.",
+        "I love that we can keep making space for both of our dreams.",
+        "You are my favorite person to share the beautiful and the unfinished with.",
+        "I love how our friendship makes our romance feel even stronger.",
+        "You make ordinary togetherness feel like something to treasure.",
+        "I love the patience we can offer each other while we keep learning.",
+        "You make a future together feel like an invitation, not an expectation.",
+        "I love the way we can turn an awkward moment into our own little joke.",
+        "You make me want to be careful with this love because it matters to me.",
+        "I love that we can encourage each other without competing.",
+        "You make our affection feel honest enough to keep growing.",
+        "I love that we can share a moment without needing to fill every silence.",
+        "You bring both warmth and wonder to the way I think about us.",
+        "I love getting to know your heart at its own pace.",
+        "You make even a simple plan feel like a memory waiting to happen.",
+        "I love that we can choose kindness again after a misunderstanding.",
+        "You make loyalty feel gentle and alive.",
+        "I love that being your person is something I get to keep learning how to do well.",
+        "You make me proud of the care we give this relationship.",
+        "I love that you are both someone I adore and someone I genuinely like.",
+        "You make our story feel personal in all the best ways.",
+        "I love how we can take the pressure off and just be together.",
+        "You give me a reason to believe in small promises kept.",
+        "I love that there is room for laughter in even our sincere moments.",
+        "You make commitment feel like a series of kind choices.",
+        "I love learning what makes you feel seen and cared for.",
+        "You make it easier to talk about what we hope for.",
+        "I love that the way we care for each other can keep changing and deepening.",
+        "You are the person I want to share both the view and the walk with.",
+        "I love how much our little world matters to me.",
+        "You make a shared smile feel like a whole conversation.",
+        "I love that we can give each other room and still feel close.",
+        "You make me want to be a thoughtful partner, not just a romantic one.",
+        "I love the way being with you turns 'someday' into something I can imagine.",
+        "You make our love feel grounded without losing its magic.",
+        "I love that we can be tender without having to be perfect.",
+        "You make me grateful for every chance to show you how much you matter.",
+        "I love the little language of looks and smiles we keep making together.",
+        "You make our closeness feel chosen, not assumed.",
+        "I love that there is always another kind thing we can do for each other.",
+        "You make me want to protect the fun parts of us as we grow.",
+        "I love that being loved by you still surprises me in sweet ways.",
+        "You make my favorite kind of romance feel like friendship with a heartbeat.",
+        "I love that we can keep becoming a better 'we' without losing ourselves.",
+        "You make every season of this story worth meeting together.",
+        "I love being on your side, even when the day is not easy.",
+        "You make me look forward to all the small chapters still unwritten.",
+
+        // The everyday reasons and little hopes I keep finding
+        "I love how a little thought of you can make me pause and smile.",
+        "You make even a quick catch-up feel worth making time for.",
+        "I love the everyday version of you just as much as the dressed-up one.",
+        "You bring a little more meaning to the word 'later' because I can look forward to it with you.",
+        "I love that your happiness matters to me even in the smallest ways.",
+        "You make me notice more of the good that was already around me.",
+        "I love the things you get excited about, even when I am still learning them.",
+        "You make a walk, a meal, or a pause feel better shared.",
+        "I love that I can picture us laughing at something no one else would understand.",
+        "You make a difficult week feel like it still has something tender in it.",
+        "I love how you turn small routines into little signs of care.",
+        "You make me want to keep finding new ways to make you feel loved.",
+        "I love the comfort of knowing I can tell you a thought as it is forming.",
+        "You are a bright thought my mind returns to on its own.",
+        "I love that your presence makes a familiar place feel a little new.",
+        "You make me believe that happiness can be quiet and still be real.",
+        "I love the way you can make a small celebration feel personal.",
+        "You make the simple plan of spending time together feel like enough.",
+        "I love imagining all the ordinary memories we have not made yet.",
+        "You make me grateful for the little in-between moments.",
+        "I love your way of making the day feel less like a checklist.",
+        "You make a kind word stay with me long after the conversation ends.",
+        "I love that I can admire you for who you are on an unremarkable day.",
+        "You make me want to keep learning the best ways to care for you.",
+        "I love that your smile can become the detail I remember most.",
+        "You bring a little more wonder into the places we already know.",
+        "I love thinking about all the seasons we could share, at our own pace.",
+        "You make a quiet evening feel like a lovely use of time.",
+        "I love that my day has room for little reminders of you.",
+        "You make me hopeful about the life we can build one day at a time.",
+        "I love the idea of showing up for you in new ways as time goes on.",
+        "You make my heart curious about what tomorrow might bring.",
+        "I love the way your interests become things I want to hear about.",
+        "You make the word 'always' feel less like a promise and more like a practice.",
+        "I love the small kindness of hearing from you in the middle of a day.",
+        "You make the everyday feel full of chances to care about each other.",
+        "I love the way you can make a simple moment stay with me.",
+        "You make me want to collect memories slowly, not rush through them.",
+        "I love that there is still so much about you for me to discover.",
+        "You make each new photo feel like a tiny doorway back to a feeling.",
+        "I love that I can feel affection for you in the middle of completely ordinary things.",
+        "You make me look forward to hearing how your day went.",
+        "I love that your presence feels like good news to my heart.",
+        "You make me want to keep making space for wonder in our lives.",
+        "I love the promise held in a plan we have not made yet.",
+        "You make it easier to imagine a future filled with small joys.",
+        "I love that our best moments can be simple enough to repeat.",
+        "You make the little things feel like the actual point of it all.",
+        "I love that being there for you is something I can do every day.",
+        "You make me want to notice what makes your eyes light up.",
+        "I love the tiny traditions we might keep inventing together.",
+        "You make me grateful that love can be both a feeling and a choice.",
+        "I love how your existence makes this very large world feel personal.",
+        "You make my favorite memories feel like they still have warmth in them.",
+        "I love that our story has space for laughter, rest, and becoming.",
+        "You make the simple act of caring about someone feel extraordinary.",
+        "I love the idea of being kind to each other through every kind of day.",
+        "You make the small moments worth looking at twice.",
+        "I love that you are the person behind so many of my softest thoughts.",
+        "You make me want to hold onto wonder without trying to hold you still.",
+        "I love that tomorrow can bring another chance to make you smile.",
+        "You make life feel more like something to share than something to get through.",
+        "I love having another reason to say that I love you.",
+        "You make every version of the future more interesting to imagine.",
+        "I love that the universe feels a little less enormous when I think of you.",
+        "You make my heart feel lucky to have found its favorite person.",
+        "I love the way you turn a passing day into a memory I want to keep.",
+        "You make me grateful for this moment and curious about the next one.",
+        "I love you for all the reasons I know and the ones I will still discover.",
+        "You make this little universe feel like it has exactly the right star in it."
+      ];
+
+      const $ = selector => document.querySelector(selector);
+      const canvas = $('#sky');
+      const ctx = canvas.getContext('2d');
+      const player = $('#player');
+      const photos = [];
+      const pointers = new Map();
+      let shape = SHAPES[Math.floor(Math.random() * SHAPES.length)];
+      let stars = [];
+      let viewport = { width: 0, height: 0, dpr: 1, unit: 1 };
+      let camera = { x: 0, y: 0, zoom: 1, panX: 0, panY: 0 };
+      let guideIndex = 0;
+      let openedStar = 0;
+      let currentTrack = -1;
+      let dragOrigin = null;
+      let pinchOrigin = null;
+      let raf = 0;
+      let addUnlocked = false;
+
+      function crownPoint(t) {
+        const vertices = [[-.52,.35],[-.48,-.42],[-.22,-.02],[0,-.52],[.22,-.02],[.48,-.42],[.52,.35]];
+        const scaled = (t / (Math.PI * 2)) * vertices.length, idx = Math.floor(scaled), mix = scaled - idx;
+        const a = vertices[idx % vertices.length], b = vertices[(idx + 1) % vertices.length];
+        return { x: a[0] + (b[0]-a[0])*mix, y: a[1] + (b[1]-a[1])*mix };
+      }
+      function lotusPoint(t) { const r = .37 + .22 * (1 + Math.cos(6*t)) / 2; return { x: Math.cos(t)*r, y: Math.sin(t)*r }; }
+      function heartPoint(t) { return { x: 16*Math.pow(Math.sin(t),3)/18, y: -(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))/18 }; }
+      function infinityPoint(t) { const d = 1 + Math.cos(t)*Math.cos(t); return { x: .67*Math.sin(t)/d, y: .52*Math.sin(t)*Math.cos(t)/d }; }
+      function spiralPoint(t) { const r = .035 + .62*(t/(Math.PI*5)); return { x: r*Math.cos(t), y: r*Math.sin(t) }; }
+
+      function curveSamples(point, count = 4200) {
+        const pts = [];
+        for (let i=0; i<=count; i++) pts.push(point(i/count * Math.PI * 2));
+        return pts;
+      }
+      function evenAlongCurve(point, count, loops = 1) {
+        const samples = [];
+        const steps = Math.max(1800, count * 24);
+        for (let i=0; i<=steps; i++) samples.push(point(i/steps * Math.PI * 2 * loops));
+        const distance = [0];
+        for (let i=1; i<samples.length; i++) distance[i] = distance[i-1] + Math.hypot(samples[i].x-samples[i-1].x, samples[i].y-samples[i-1].y);
+        const total = distance.at(-1) || 1;
+        const out = [];
+        for (let n=0; n<count; n++) {
+          const target = total * (n + .5) / count;
+          let lo=0, hi=distance.length-1;
+          while(lo<hi) { const mid=(lo+hi)>>1; if(distance[mid]<target) lo=mid+1; else hi=mid; }
+          const i=Math.max(1,lo), span=distance[i]-distance[i-1] || 1, f=(target-distance[i-1])/span;
+          out.push({ x:samples[i-1].x+(samples[i].x-samples[i-1].x)*f, y:samples[i-1].y+(samples[i].y-samples[i-1].y)*f });
+        }
+        return out;
+      }
+      function makeStars(count) {
+        if (!count) return [];
+        let pts;
+        if (shape.twin) {
+          const leftCount=Math.ceil(count/2), rightCount=count-leftCount;
+          const galaxy=(amount,cx,phase)=>evenAlongCurve(t=>{const r=.025+.22*(t/(Math.PI*4));return{x:cx+r*Math.cos(t+phase),y:r*.8*Math.sin(t+phase)};},amount,2);
+          pts=[...galaxy(leftCount,-.34,0),...galaxy(rightCount,.34,Math.PI)];
+        } else {
+          const p=evenAlongCurve(shape.point,count,shape.name==='Celestial Spiral'?2.5:1);
+          const bounds=p.reduce((b,v)=>({minX:Math.min(b.minX,v.x),maxX:Math.max(b.maxX,v.x),minY:Math.min(b.minY,v.y),maxY:Math.max(b.maxY,v.y)}),{minX:Infinity,maxX:-Infinity,minY:Infinity,maxY:-Infinity});
+          const cx=(bounds.minX+bounds.maxX)/2, cy=(bounds.minY+bounds.maxY)/2;
+          const span=Math.max(bounds.maxX-bounds.minX,bounds.maxY-bounds.minY)||1;
+          pts=p.map(v=>({x:(v.x-cx)/span*1.18,y:(v.y-cy)/span*1.18}));
+        }
+        return pts.map((p,index)=>({x:p.x*430,y:p.y*430,index,phase:Math.random()*Math.PI*2,size:1.55+Math.random()*1.2}));
+      }
+
+      function resize() {
+        const rect=canvas.getBoundingClientRect(), dpr=Math.min(window.devicePixelRatio||1,2);
+        viewport={width:rect.width,height:rect.height,dpr,unit:Math.min(rect.width,rect.height)/960};
+        canvas.width=Math.round(rect.width*dpr); canvas.height=Math.round(rect.height*dpr);
+        ctx.setTransform(dpr,0,0,dpr,0,0);
+        draw();
+      }
+      function paintBackground(time) {
+        const {width:w,height:h}=viewport;
+        const g=ctx.createRadialGradient(w*.5,h*.49,10,w*.5,h*.49,Math.max(w,h)*.74);
+        g.addColorStop(0,'rgba(24,26,57,.07)');g.addColorStop(1,'rgba(2,3,12,.31)');ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+        // Deterministic distant stars keep the backdrop still while the photo constellation moves.
+        for(let i=0;i<120;i++){
+          const x=((i*197.17+41)%997)/997*w, y=((i*317.39+23)%991)/991*h;
+          const twinkle=.34+.37*(1+Math.sin(time*.0007+i*2.7))/2;
+          ctx.beginPath();ctx.fillStyle=`rgba(224,226,255,${twinkle})`;ctx.arc(x,y,(i%13===0)?1.15:.65,0,Math.PI*2);ctx.fill();
+        }
+      }
+      function draw(time=performance.now()) {
+        if(!ctx||!viewport.width) return;
+        ctx.clearRect(0,0,viewport.width,viewport.height);paintBackground(time);
+        if(stars.length){
+          const unit=viewport.unit*camera.zoom;
+          ctx.save();ctx.translate(viewport.width/2+camera.panX,viewport.height/2+camera.panY);ctx.scale(unit,unit);ctx.translate(-camera.x,-camera.y);
+          const nowPulse=(1+Math.sin(time*.0038))/2;
+          if(stars.length>1){
+            ctx.lineWidth=1.25/Math.max(.5,camera.zoom);ctx.strokeStyle=`rgba(243,213,154,${.14+.08*nowPulse})`;ctx.shadowBlur=11;ctx.shadowColor='rgba(255,221,159,.44)';
+            const clusters=shape.twin?[stars.slice(0,Math.ceil(stars.length/2)),stars.slice(Math.ceil(stars.length/2))]:[stars];
+            for(const group of clusters){ if(group.length<2)continue;ctx.beginPath();ctx.moveTo(group[0].x,group[0].y);for(let i=1;i<group.length;i++)ctx.lineTo(group[i].x,group[i].y);if(shape.name!=='Celestial Spiral')ctx.closePath();ctx.stroke(); }
+            ctx.shadowBlur=0;
+          }
+          for(const star of stars){
+            const isGuide=star.index===guideIndex, pulse=.5+.5*Math.sin(time*.003+star.phase);
+            if(isGuide){ctx.beginPath();ctx.fillStyle=`rgba(255,218,133,${.07+.1*nowPulse})`;ctx.arc(star.x,star.y,13+5*nowPulse,0,Math.PI*2);ctx.fill();}
+            const radius=star.size*(isGuide?1.45:1)+pulse*.45;
+            ctx.beginPath();ctx.fillStyle=isGuide?'#fff0c7':'#f1eaff';ctx.shadowBlur=isGuide?22:10;ctx.shadowColor=isGuide?'#ffda85':'#c1b8ff';ctx.arc(star.x,star.y,radius,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
+          }
+          ctx.restore();
+        }
+        if(!raf) raf=requestAnimationFrame(time=>{raf=0;draw(time);});
+      }
+      function rebuild() { stars=makeStars(photos.length); $('#shapeLabel').textContent=`✦ ${shape.name} · ${photos.length} photo stars ✦`; draw(); }
+      function localDateIndex(count) {
+        const now=new Date(), start=new Date(now.getFullYear(),0,0), day=Math.floor((now-start)/86400000);
+        return count ? (day-1)%count : 0;
+      }
+      function imageExtensions() { return ['jpg','jpeg','png','webp','gif']; }
+      function isImage(name) { return /\.(jpe?g|png|webp|gif|avif)$/i.test(name); }
+      function sortPhotos(list) { return list.sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true,sensitivity:'base'})); }
+      function guessRepo() {
+        const host=location.hostname.toLowerCase();
+        if(!host.endsWith('.github.io'))return {owner:'',repo:''};
+        const owner=host.slice(0,-'.github.io'.length), first=location.pathname.split('/').filter(Boolean)[0];
+        return {owner,repo:first||`${owner}.github.io`};
+      }
+      async function fromGitHub() {
+        const {owner,repo}=guessRepo(); if(!owner||!repo) return [];
+        const response=await fetch(`https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/contents/photos`,{headers:{'Accept':'application/vnd.github+json'}});
+        if(!response.ok) throw new Error(`GitHub photos returned ${response.status}`);
+        const files=await response.json();
+        if(!Array.isArray(files)) return [];
+        return sortPhotos(files.filter(item=>item.type==='file'&&isImage(item.name)&&item.download_url).map(item=>({name:item.name,url:item.download_url})));
+      }
+      function tryImage(url) {
+        return new Promise(resolve=>{const img=new Image();img.onload=()=>resolve({ok:true,url});img.onerror=()=>resolve({ok:false});img.src=url;});
+      }
+      async function fromNumberedFiles() {
+        const found=[]; let misses=0;
+        for(let number=1;number<=500&&misses<3;number++){
+          let result=null;
+          for(const ext of imageExtensions()){
+            const url=`photos/${number}.${ext}`;const loaded=await tryImage(url);
+            if(loaded.ok){result={name:`${number}.${ext}`,url};break;}
+          }
+          if(result){found.push(result);misses=0;}else misses++;
+        }
+        return found;
+      }
+      async function loadReasons() {
+        try {
+          const response=await fetch('reasons.json',{cache:'no-store'});if(!response.ok)return;
+          const data=await response.json(), custom=Array.isArray(data)?data:data?.reasons;
+          if(Array.isArray(custom)&&custom.length) reasons.splice(0,reasons.length,...custom.map(v=>String(v)).filter(Boolean));
+        } catch { /* optional file; built-in 365 reasons stay in place */ }
+      }
+      async function loadPhotos() {
+        $('#shapeLabel').textContent='✦ gathering your photo stars ✦';
+        let found=[];
+        try { found=await fromGitHub(); } catch { /* fall back to local numbered photos */ }
+        if(!found.length) found=await fromNumberedFiles();
+        photos.splice(0,photos.length,...found);guideIndex=localDateIndex(photos.length);rebuild();
+        if(!photos.length) $('#shapeLabel').textContent='✦ add photos to make your constellation ✦';
+      }
+
+      function unlock(event) {
+        event.preventDefault();
+        const input=$('#passcode');
+        if(input.value.trim()!==PAGE_PASSWORD){$('#loginMessage').textContent='That little secret did not quite open the sky. Try once more.';input.select();return;}
+        $('#loginMessage').textContent='';
+        document.body.classList.add('unlocked');
+        $('#loginVeil').classList.add('open');
+        // play() is called synchronously inside the password submit gesture for mobile autoplay policies.
+        player.muted=false;player.volume=.8;currentTrack=Math.floor(Math.random()*SONGS.length);setTrack(currentTrack,true);
+        Promise.all([loadReasons(),loadPhotos()]);
+        window.setTimeout(()=>canvas.focus?.(),850);
+      }
+      function setTrack(index,autoplay) {
+        currentTrack=(index+SONGS.length)%SONGS.length;
+        const song=SONGS[currentTrack];$('#trackKicker').textContent=`random pick ${currentTrack+1} of ${SONGS.length}`;$('#trackTitle').textContent=song.title;
+        player.pause();player.src=song.file;
+        if(autoplay){const attempt=player.play();if(attempt&&attempt.catch)attempt.catch(()=>{$('#trackTitle').textContent=`Tap ▶ to play · ${song.title}`;updatePlaybackButton();});}
+      }
+      function updatePlaybackButton() {
+        const playing=!player.paused&&!player.ended,button=$('#playButton');
+        button.textContent=playing?'Ⅱ':'▶';button.setAttribute('aria-label',playing?'Pause music':'Play music');button.title=playing?'Pause music':'Play music';
+      }
+      function togglePlayback() {
+        if(player.paused||player.ended){
+          if(currentTrack<0){setTrack(Math.floor(Math.random()*SONGS.length),true);return;}
+          const attempt=player.play();if(attempt&&attempt.catch)attempt.catch(()=>{$('#trackTitle').textContent=`Tap ▶ to play · ${SONGS[currentTrack].title}`;});
+        }else player.pause();
+      }
+      function updateMute() {
+        player.muted=!player.muted;
+        $('#muteButton').textContent=player.muted?'×':'♫';$('#muteButton').setAttribute('aria-label',player.muted?'Unmute music':'Mute music');$('#muteButton').title=player.muted?'Unmute music':'Mute music';
+      }
+      function openMemory(index) {
+        if(!photos.length)return;
+        openedStar=(index+photos.length)%photos.length;
+        const photo=photos[openedStar],img=$('#memoryImage'),error=$('#imageError');
+        $('#memoryLabel').textContent=openedStar===guideIndex?"Today's Guiding Star":"A little memory among the stars";
+        $('#photoCount').textContent=`${String(openedStar+1).padStart(2,'0')} / ${photos.length}`;
+        img.classList.remove('ready');error.style.display='none';img.style.display='block';img.alt=`Photo star ${openedStar+1} for Devi`;
+        img.onload=()=>img.classList.add('ready');img.onerror=()=>{img.style.display='none';error.style.display='block';};img.src=photo.url;
+        const note=reasons[openedStar%reasons.length]||'I love you for the way you are, exactly as you are.';
+        typewrite(note);$('#memoryModal').classList.add('visible');$('#previousButton').focus({preventScroll:true});
+      }
+      let typingTimer=0;
+      function typewrite(text) {
+        window.clearInterval(typingTimer);const target=$('#reasonText');target.textContent='';
+        if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){target.textContent=text;return;}
+        let index=0;typingTimer=window.setInterval(()=>{target.textContent+=text.charAt(index++);if(index>=text.length)window.clearInterval(typingTimer);},19);
+      }
+      function closeModal(id) { $(`#${id}`).classList.remove('visible');if(id==='addModal')lockAdd(); }
+      function lockAdd() { addUnlocked=false;$('#addGate').classList.remove('hidden');$('#uploader').classList.add('hidden');$('#addPasscode').value='';$('#addGateError').textContent=''; }
+      function unlockAdd() {
+        if($('#addPasscode').value.trim()!==PAGE_PASSWORD){$('#addGateError').textContent='That is not the keeper’s secret.';return;}
+        addUnlocked=true;$('#addGate').classList.add('hidden');$('#uploader').classList.remove('hidden');$('#addGateError').textContent='';
+        const inferred=guessRepo();$('#ownerField').value=inferred.owner;$('#repoField').value=inferred.repo;
+        $('#tokenField').value=sessionStorage.getItem('devi.githubToken')||'';
+        $('#ownerField').focus({preventScroll:true});
+      }
+      function fileToBase64(file) {
+        return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result).split(',')[1]);reader.onerror=()=>reject(new Error(`Could not read ${file.name}`));reader.readAsDataURL(file);});
+      }
+      function safeFileName(name) { return name.normalize('NFKD').replace(/[^a-zA-Z0-9._-]+/g,'-').replace(/^-+|-+$/g,'').slice(-100)||'memory.jpg'; }
+      async function uploadFiles() {
+        if(!addUnlocked)return;
+        const files=[...$('#photoFiles').files];if(!files.length){$('#uploadStatus').textContent='Choose at least one photo first.';return;}
+        const owner=$('#ownerField').value.trim(),repo=$('#repoField').value.trim(),token=$('#tokenField').value.trim();
+        if(!owner||!repo||!token){$('#uploadStatus').textContent='Add your GitHub username, repository, and token.';return;}
+        sessionStorage.setItem('devi.githubToken',token);
+        $('#uploadButton').disabled=true;let attempted=0,uploaded=0,errors=[];$('#uploadStatus').textContent=`Adding 0 of ${files.length} stars…`;
+        for(const file of files){
+          try {
+            const base64=await fileToBase64(file),name=`${Date.now()}-${String(++attempted).padStart(2,'0')}-${safeFileName(file.name)}`;
+            const endpoint=`https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/contents/photos/${encodeURIComponent(name)}`;
+            const response=await fetch(endpoint,{method:'PUT',headers:{'Accept':'application/vnd.github+json','Authorization':`Bearer ${token}`,'X-GitHub-Api-Version':'2022-11-28','Content-Type':'application/json'},body:JSON.stringify({message:`Add photo star ${name}`,content:base64})});
+            if(!response.ok){const payload=await response.json().catch(()=>({}));throw new Error(payload.message||`GitHub returned ${response.status}`);}
+            uploaded++;$('#uploadStatus').textContent=`Added ${uploaded} of ${files.length} stars…`;
+          } catch(error){errors.push(error.message);}
+        }
+        $('#uploadButton').disabled=false;
+        if(errors.length){$('#uploadStatus').textContent=`Uploaded ${uploaded} photo(s). ${errors[0]}`;}
+        else $('#uploadStatus').textContent=`All ${uploaded} new stars are on their way. Refreshing the sky…`;
+        if(uploaded) { shape=SHAPES[Math.floor(Math.random()*SHAPES.length)];await new Promise(resolve=>setTimeout(resolve,1100));await loadPhotos(); }
+      }
+
+      function worldPoint(clientX,clientY) {
+        const r=canvas.getBoundingClientRect(),unit=viewport.unit*camera.zoom;
+        return {x:(clientX-r.left-viewport.width/2-camera.panX)/unit+camera.x,y:(clientY-r.top-viewport.height/2-camera.panY)/unit+camera.y};
+      }
+      function zoomAt(nextZoom,clientX,clientY) {
+        const before=worldPoint(clientX,clientY);camera.zoom=Math.max(.48,Math.min(3.8,nextZoom));const after=worldPoint(clientX,clientY);
+        camera.x+=before.x-after.x;camera.y+=before.y-after.y;
+      }
+      function hitStar(clientX,clientY) {
+        const p=worldPoint(clientX,clientY),limit=22/Math.max(.5,camera.zoom);let best=-1,bestDist=Infinity;
+        for(let i=0;i<stars.length;i++){const d=Math.hypot(stars[i].x-p.x,stars[i].y-p.y);if(d<limit&&d<bestDist){best=i;bestDist=d;}}
+        return best;
+      }
+      let multiTouchGesture=false;
+      canvas.addEventListener('pointerdown',event=>{
+        canvas.setPointerCapture(event.pointerId);pointers.set(event.pointerId,{x:event.clientX,y:event.clientY});canvas.classList.add('dragging');
+        if(pointers.size===1)dragOrigin={x:event.clientX,y:event.clientY,panX:camera.panX,panY:camera.panY,moved:false};
+        else if(pointers.size===2){multiTouchGesture=true;const pts=[...pointers.values()];pinchOrigin={distance:Math.hypot(pts[0].x-pts[1].x,pts[0].y-pts[1].y),zoom:camera.zoom,center:{x:(pts[0].x+pts[1].x)/2,y:(pts[0].y+pts[1].y)/2}};dragOrigin=null;}
+      });
+      canvas.addEventListener('pointermove',event=>{
+        if(!pointers.has(event.pointerId))return;pointers.set(event.pointerId,{x:event.clientX,y:event.clientY});
+        if(pointers.size===2&&pinchOrigin){const pts=[...pointers.values()],distance=Math.hypot(pts[0].x-pts[1].x,pts[0].y-pts[1].y),center={x:(pts[0].x+pts[1].x)/2,y:(pts[0].y+pts[1].y)/2};zoomAt(pinchOrigin.zoom*distance/(pinchOrigin.distance||1),center.x,center.y);camera.panX+=center.x-pinchOrigin.center.x;camera.panY+=center.y-pinchOrigin.center.y;pinchOrigin={distance,zoom:camera.zoom,center};}
+        else if(pointers.size===1&&dragOrigin){const dx=event.clientX-dragOrigin.x,dy=event.clientY-dragOrigin.y;if(Math.hypot(dx,dy)>5)dragOrigin.moved=true;camera.panX=dragOrigin.panX+dx;camera.panY=dragOrigin.panY+dy;}
+      });
+      function endPointer(event) {
+        const wasDrag=dragOrigin?.moved;pointers.delete(event.pointerId);
+        if(pointers.size<2)pinchOrigin=null;
+        if(!pointers.size){canvas.classList.remove('dragging');if(!wasDrag&&!multiTouchGesture){const hit=hitStar(event.clientX,event.clientY);if(hit>=0)openMemory(hit);}dragOrigin=null;multiTouchGesture=false;}
+      }
+      canvas.addEventListener('pointerup',endPointer);canvas.addEventListener('pointercancel',endPointer);canvas.addEventListener('wheel',event=>{event.preventDefault();zoomAt(camera.zoom*Math.exp(-event.deltaY*.001),event.clientX,event.clientY);},{passive:false});
+      canvas.addEventListener('keydown',event=>{if(event.key==='Enter'&&photos.length)openMemory(guideIndex);});
+      $('#loginForm').addEventListener('submit',unlock);
+      $('#playButton').addEventListener('click',togglePlayback);
+      $('#muteButton').addEventListener('click',updateMute);
+      $('#skipButton').addEventListener('click',()=>setTrack(currentTrack+1,true));
+      player.addEventListener('play',()=>{document.body.classList.add('is-playing');if(currentTrack>=0)$('#trackTitle').textContent=SONGS[currentTrack].title;updatePlaybackButton();});
+      player.addEventListener('pause',()=>{document.body.classList.remove('is-playing');updatePlaybackButton();});
+      player.addEventListener('error',()=>{$('#trackTitle').textContent='Could not load this song · skip to another';updatePlaybackButton();});
+      $('#nextButton').addEventListener('click',()=>openMemory(openedStar+1));
+      $('#previousButton').addEventListener('click',()=>openMemory(openedStar-1));
+      $('#addStarsButton').addEventListener('click',()=>$('#addModal').classList.add('visible'));
+      $('#unlockAddButton').addEventListener('click',unlockAdd);
+      $('#addPasscode').addEventListener('keydown',event=>{if(event.key==='Enter')unlockAdd();});
+      $('#lockAddButton').addEventListener('click',lockAdd);
+      $('#uploadButton').addEventListener('click',uploadFiles);
+      $('#tokenField').addEventListener('input',()=>sessionStorage.setItem('devi.githubToken',$('#tokenField').value));
+      $('#photoFiles').addEventListener('change',event=>{$('#fileSummary').textContent=[...event.target.files].map(f=>f.name).join(' · ');});
+      document.querySelectorAll('[data-close]').forEach(button=>button.addEventListener('click',()=>closeModal(button.dataset.close)));
+      document.querySelectorAll('.modal-backdrop').forEach(backdrop=>backdrop.addEventListener('click',event=>{if(event.target===backdrop)closeModal(backdrop.id);}));
+      window.addEventListener('keydown',event=>{
+        if(event.key==='Escape')document.querySelectorAll('.modal-backdrop.visible').forEach(modal=>closeModal(modal.id));
+        if($('#memoryModal').classList.contains('visible')&&event.key==='ArrowRight')openMemory(openedStar+1);
+        if($('#memoryModal').classList.contains('visible')&&event.key==='ArrowLeft')openMemory(openedStar-1);
+      });
+      window.addEventListener('resize',resize,{passive:true});
+      $('#ownerField').value=guessRepo().owner;$('#repoField').value=guessRepo().repo;
+      resize();
+      $('#shapeLabel').textContent=`✦ ${shape.name} is waiting for you ✦`;
+      $('#reasonText').textContent='';
+    })();
+  </script>
+</body>
+</html>
